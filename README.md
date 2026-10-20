@@ -1,0 +1,50 @@
+# Arkanoid Arcade
+
+Un clon arcade retro-futurista de **Arkanoid** desarrollado en HTML5, CSS3 y JavaScript puro (Canvas 2D) con audio procedural generado mediante la Web Audio API.
+
+## 🚀 Características
+
+- **Sin dependencias externas**: Código completamente autónomo en un archivo ejecutable directamente en el navegador.
+- **Audio procedural**: Efectos de sonido y fanfarrias generados en tiempo real mediante osciladores Web Audio API, sin necesidad de archivos de audio externos.
+- **Física sólida y calibrada**:
+  - Motor de física con paso de tiempo fijo (*Fixed Timestep* a 60 Hz) independiente de la tasa de refresco del monitor (compatible con pantallas de 60 Hz, 120 Hz ProMotion, etc.).
+  - Sub-stepping (4 pasos por frame) para evitar el efecto túnel.
+  - Rebote angular en la pala en función del punto de impacto y la inercia del movimiento.
+  - Detección precisa de caras y esquinas en ladrillos.
+  - Mecanismo anti-bloqueo automático.
+- **Estética retro-neón**: Bloques luminosos con halo de resplandor, bloques metálicos blindados con remaches y partículas de impacto con estela.
+- **Power-ups deterministas (PRNG Mulberry32)**:
+  - ✦ **Multibola**: Triplica las bolas en juego.
+  - ↔ **Pala ancha**: Incrementa la superficie de control de la pala.
+  - ⚡ **Láser**: Permite disparar proyectiles a los bloques.
+  - 🔥 **Bola de fuego**: Atraviesa los bloques destructibles sin rebotar.
+- **4 Niveles progresivos**:
+  1. *Muralla*: Fase introductoria con bloques estándar.
+  2. *Fortaleza*: Incorpora bloques reforzados de 2 golpes y bloques de titanio indestructibles.
+  3. *Laberinto Dorado*: Distribución laberíntica compleja.
+  4. *Enfrentamiento Final*: Combate contra el jefe nodriza **DOH**, con barra de salud, disparos defensivos, señuelos y secuencia de explosión cinemática con partículas y ondas de choque.
+- **Soporte multiplataforma**: Controles para teclado, ratón y pantallas táctiles (móviles y tablets).
+- **Persistencia**: Guarda récord de puntuación y nivel máximo en `localStorage`.
+
+---
+
+## 🎮 Controles
+
+| Acción | Control |
+|---|---|
+| **Mover pala** | Flechas `←` / `→`, ratón o deslizamiento táctil |
+| **Lanzar bola / Disparar láser** | `ESPACIO`, clic izquierdo o pulsación táctil |
+| **Pausa** | `P` o `ESC` |
+| **Continuar nivel (tras Game Over)** | `C` |
+| **Reiniciar partida desde el Nivel 1** | `R` |
+
+---
+
+## 🛠️ Cómo jugar
+
+Simplemente abre el archivo `index.html` en cualquier navegador web moderno:
+
+```bash
+open index.html # En macOS
+```
+O haz doble clic sobre el archivo `index.html`.
