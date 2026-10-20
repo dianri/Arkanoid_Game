@@ -1,6 +1,17 @@
 # Arkanoid Arcade
 
+> 🕹️ **Juega online ahora mismo**: **[https://dianri.github.io/Arkanoid_Game/](https://dianri.github.io/Arkanoid_Game/)**
+
 Un clon arcade retro-futurista de **Arkanoid** desarrollado en HTML5, CSS3 y JavaScript puro (Canvas 2D) con audio procedural generado mediante la Web Audio API.
+
+---
+
+## 🌐 Jugar online
+
+Puedes jugar directamente desde tu navegador en ordenador, móvil o tablet sin instalar nada:  
+👉 **[https://dianri.github.io/Arkanoid_Game/](https://dianri.github.io/Arkanoid_Game/)**
+
+---
 
 ## 🚀 Características
 
@@ -40,9 +51,9 @@ Un clon arcade retro-futurista de **Arkanoid** desarrollado en HTML5, CSS3 y Jav
 
 ---
 
-## 🛠️ Cómo jugar
+## 🛠️ Cómo ejecutar en local
 
-Simplemente abre el archivo `index.html` en cualquier navegador web moderno:
+Si prefieres jugar en local, abre el archivo `index.html` en cualquier navegador web moderno:
 
 ```bash
 open index.html # En macOS
