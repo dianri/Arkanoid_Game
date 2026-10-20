@@ -2,7 +2,7 @@
 
 > 🕹️ **Juega online ahora mismo**: **[https://dianri.github.io/Arkanoid_Game/](https://dianri.github.io/Arkanoid_Game/)**
 
-Un clon arcade retro-futurista de **Arkanoid** desarrollado en HTML5, CSS3 y JavaScript puro (Canvas 2D) con audio procedural generado mediante la Web Audio API.
+Un clon arcade retro-futurista de **Arkanoid** desarrollado en HTML5, CSS3 y JavaScript puro (Canvas 2D) con audio procedural generado mediante la Web Audio API y soporte para integración en aplicaciones contenedor mediante `postMessage`.
 
 ---
 
@@ -36,6 +36,7 @@ Puedes jugar directamente desde tu navegador en ordenador, móvil o tablet sin i
   4. *Enfrentamiento Final*: Combate contra el jefe nodriza **DOH**, con barra de salud, disparos defensivos, señuelos y secuencia de explosión cinemática con partículas y ondas de choque.
 - **Soporte multiplataforma**: Controles para teclado, ratón y pantallas táctiles (móviles y tablets).
 - **Persistencia**: Guarda récord de puntuación y nivel máximo en `localStorage`.
+- **Integración con rankings externos**: Emite eventos `postMessage` hacia aplicaciones contenedoras (`iframe`) al finalizar la partida.
 
 ---
 
@@ -51,9 +52,46 @@ Puedes jugar directamente desde tu navegador en ordenador, móvil o tablet sin i
 
 ---
 
+## 📡 Integración en Apps Contenedoras (`postMessage`)
+
+El juego está preparado para incrustarse en aplicaciones web externas mediante un `<iframe>`. Al finalizar la partida (**Game Over** o **Victoria**), el juego emite un mensaje a la ventana padre con la puntuación final:
+
+### 1. Incrustación en HTML
+```html
+<iframe 
+  src="https://dianri.github.io/Arkanoid_Game/" 
+  width="860" 
+  height="740" 
+  frameborder="0"
+  allow="autoplay">
+</iframe>
+```
+
+### 2. Captura del evento en la aplicación contenedora
+```javascript
+window.addEventListener('message', (event) => {
+  if (event.data?.type === 'ARKANOID_SCORE_SUBMISSION') {
+    const { score, game } = event.data;
+    console.log(`Puntuación recibida de ${game}: ${score}`);
+    
+    // Ejemplo: registrar puntuación en el ranking de Qué Comemos Hoy
+    guardarPuntuacionRanking(score);
+  }
+});
+```
+
+### 3. Esquema del Payload
+| Propiedad | Tipo | Descripción |
+|---|---|---|
+| `type` | `string` | Identificador del evento: `'ARKANOID_SCORE_SUBMISSION'` |
+| `score` | `number` | Puntuación final obtenida por el jugador |
+| `game` | `string` | Identificador del juego: `'arkanoid'` |
+
+---
+
 ## 🛠️ Cómo ejecutar en local
 
-Si prefieres jugar en local, abre el archivo `index.html` en cualquier navegador web moderno:
+Si prefieres jugar o desarrollar en local, abre el archivo `index.html` en cualquier navegador web moderno:
 
 ```bash
 open index.html # En macOS
