@@ -284,12 +284,14 @@ function resetGame() {
   puTimers = {}; lasers = []; particles = []; powerups = []; shots = [];
   shake = 0; paused = false; transition = null;
   lastPaddleX = paddle.x; paddleInertia = 0;
+  scoreSubmitted = false;
   loadLevel(0);
 }
 
 function continueLevel() {
   lives = 3;
   puTimers = {}; lasers = []; particles = []; powerups = [];
+  scoreSubmitted = false;
   loadLevel(levelIdx);
 }
 
@@ -337,6 +339,24 @@ function saveHigh() {
 function saveMaxLevel() {
   const reached = levelIdx + 1;
   if (reached > maxLevel) { maxLevel = reached; localStorage.setItem('arkanoid_maxlevel', maxLevel); }
+}
+
+let scoreSubmitted = false;
+function submitScore() {
+  if (scoreSubmitted) return;
+  scoreSubmitted = true;
+  const currentScore = score || 0;
+  if (window.parent !== window) {
+    try {
+      window.parent.postMessage({
+        type: 'ARKANOID_SCORE_SUBMISSION',
+        score: currentScore,
+        game: 'arkanoid'
+      }, '*');
+    } catch (e) {
+      console.warn('Error al enviar la puntuación a la app contenedora:', e);
+    }
+  }
 }
 
 function applyPowerup(t) {
@@ -597,6 +617,7 @@ function update() {
         saveMaxLevel();
         boss = null;
         state = 'won';
+        submitScore();
         updateHud();
       }
     } else {
@@ -652,6 +673,7 @@ function update() {
       if (lives <= 0) {
         state = 'gameover';
         saveHigh(); saveMaxLevel();
+        submitScore();
         updateHud(); // sincroniza el botón: CONTINUAR NIVEL
       } else {
         puTimers = {}; lasers = []; stun = 0; shrink = 0;
@@ -707,6 +729,7 @@ function update() {
       sweep(400, 1000, 0.4, 0.15, 'triangle');
     } else {
       state = 'won';
+      submitScore();
       sweep(500, 1400, 0.5, 0.2, 'triangle');
     }
   }
@@ -1005,17 +1028,27 @@ function draw() {
     ctx.fillText('PULSA ESPACIO O CLIC PARA LANZAR', W / 2, H / 2 + 60);
   } else if (state === 'gameover') {
     ctx.fillStyle = '#ff2e63';
-    ctx.fillText('GAME OVER', W / 2, H / 2 + 40);
-    ctx.font = '16px "Courier New", monospace';
+    ctx.fillText('GAME OVER', W / 2, H / 2 + 30);
+    ctx.font = '15px "Courier New", monospace';
     ctx.fillStyle = '#8b97ad';
-    ctx.fillText('C: continuar en el Nivel ' + (levelIdx + 1) + ' (conserva puntos)', W / 2, H / 2 + 70);
-    ctx.fillText('R: reiniciar desde el Nivel 1', W / 2, H / 2 + 92);
+    ctx.fillText('C: continuar en el Nivel ' + (levelIdx + 1) + ' (conserva puntos)', W / 2, H / 2 + 58);
+    ctx.fillText('R: reiniciar desde el Nivel 1', W / 2, H / 2 + 78);
+    if (window.parent !== window || scoreSubmitted) {
+      ctx.font = 'bold 13px "Courier New", monospace';
+      ctx.fillStyle = '#3ddc97';
+      ctx.fillText('¡Puntuación (' + score + ') enviada al ranking de Qué Comemos Hoy!', W / 2, H / 2 + 104);
+    }
   } else if (state === 'won') {
     ctx.fillStyle = '#3ddc97';
-    ctx.fillText('¡VICTORIA ABSOLUTA!', W / 2, H / 2 + 40);
-    ctx.font = '16px "Courier New", monospace';
+    ctx.fillText('¡VICTORIA ABSOLUTA!', W / 2, H / 2 + 30);
+    ctx.font = '15px "Courier New", monospace';
     ctx.fillStyle = '#8b97ad';
-    ctx.fillText('Pulsa R o el botón REINICIAR', W / 2, H / 2 + 70);
+    ctx.fillText('Pulsa R o el botón REINICIAR', W / 2, H / 2 + 58);
+    if (window.parent !== window || scoreSubmitted) {
+      ctx.font = 'bold 13px "Courier New", monospace';
+      ctx.fillStyle = '#ffd23f';
+      ctx.fillText('¡Puntuación final (' + score + ') enviada al ranking de Qué Comemos Hoy!', W / 2, H / 2 + 84);
+    }
   } else if (state === 'transition') {
     const t = Math.min(1, transition.t / 90);
     ctx.globalAlpha = t;
