@@ -2,44 +2,175 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Arkanoid — Arcade</title>
 <style>
   :root { --neon:#4cc2ff; --bg:#0b0f1a; }
   * { box-sizing:border-box; margin:0; padding:0; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    touch-action: none;
+    overscroll-behavior: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
   body {
-    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: radial-gradient(circle at 50% 20%, #16203a 0%, #0b0f1a 60%);
-    font-family:'Courier New', ui-monospace, monospace; color:#e8ecf5;
+    font-family: 'Courier New', ui-monospace, monospace;
+    color: #e8ecf5;
+    padding: 6px;
   }
+
   .cabina {
-    padding:22px 26px 18px; border:2px solid rgba(76,194,255,.35); border-radius:14px;
-    background:#0d1220; box-shadow:0 0 40px rgba(76,194,255,.15), inset 0 0 60px rgba(0,0,0,.5);
+    width: 100%;
+    max-width: 864px;
+    max-height: 100vh;
+    max-height: 100dvh;
+    padding: 12px 16px 10px;
+    border: 2px solid rgba(76,194,255,.35);
+    border-radius: 14px;
+    background: #0d1220;
+    box-shadow: 0 0 40px rgba(76,194,255,.15), inset 0 0 60px rgba(0,0,0,.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
+
   h1 {
-    font-size:22px; letter-spacing:6px; color:var(--neon);
-    text-shadow:0 0 12px rgba(76,194,255,.6); margin-bottom:12px; text-align:center;
+    font-size: clamp(16px, 3.2vw, 22px);
+    letter-spacing: clamp(3px, 1vw, 6px);
+    color: var(--neon);
+    text-shadow: 0 0 12px rgba(76,194,255,.6);
+    margin-bottom: 8px;
+    text-align: center;
   }
-  canvas { display:block; border-radius:10px; background:#05070d; touch-action:none; }
-  .hud { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-top:12px; font-size:14px; letter-spacing:2px; }
-  .hud b { color:var(--neon); }
-  .vidas { color:#ff2e63; letter-spacing:4px; text-shadow:0 0 8px rgba(255,46,99,.5); }
-  .record { color:#ffd23f; }
-  .powerups { margin-top:8px; font-size:12px; letter-spacing:2px; color:#3ddc97; min-height:18px; text-align:center; }
-  .controls { margin-top:10px; font-size:12px; color:#8b97ad; text-align:center; }
+
+  .canvas-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 800px;
+    max-height: calc(100dvh - 120px);
+    aspect-ratio: 800 / 600;
+    object-fit: contain;
+    border-radius: 10px;
+    background: #05070d;
+    touch-action: none;
+  }
+
+  .hud {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px 12px;
+    margin-top: 8px;
+    font-size: clamp(11px, 2.2vw, 14px);
+    letter-spacing: 1px;
+  }
+
+  .hud b { color: var(--neon); }
+  .vidas { color: #ff2e63; letter-spacing: 3px; text-shadow: 0 0 8px rgba(255,46,99,.5); }
+  .record { color: #ffd23f; }
+  .powerups {
+    margin-top: 4px;
+    font-size: clamp(10px, 2vw, 12px);
+    letter-spacing: 1px;
+    color: #3ddc97;
+    min-height: 16px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .controls {
+    margin-top: 6px;
+    font-size: clamp(9px, 1.8vw, 11px);
+    color: #8b97ad;
+    text-align: center;
+    line-height: 1.3;
+    width: 100%;
+  }
+
   button {
-    background:transparent; border:1px solid var(--neon); color:var(--neon);
-    font-family:inherit; font-size:12px; padding:6px 14px; border-radius:8px;
-    cursor:pointer; letter-spacing:2px;
+    background: transparent;
+    border: 1px solid var(--neon);
+    color: var(--neon);
+    font-family: inherit;
+    font-size: clamp(10px, 2vw, 12px);
+    padding: 4px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    touch-action: manipulation;
   }
-  button:hover { background:rgba(76,194,255,.12); }
-  button.destacado { border-color:#ffd23f; color:#ffd23f; text-shadow:0 0 10px rgba(255,210,63,.6); background:rgba(255,210,63,.10); }
+
+  button:hover { background: rgba(76,194,255,.12); }
+  button.destacado {
+    border-color: #ffd23f;
+    color: #ffd23f;
+    text-shadow: 0 0 10px rgba(255,210,63,.6);
+    background: rgba(255,210,63,.10);
+  }
+
+  @media (max-height: 540px) {
+    /* Modo horizontal (landscape) o pantallas reducidas */
+    body { padding: 2px; }
+    .cabina {
+      padding: 4px 8px;
+      border-width: 1px;
+      border-radius: 8px;
+    }
+    h1 {
+      font-size: 13px;
+      letter-spacing: 2px;
+      margin-bottom: 2px;
+    }
+    canvas {
+      max-height: calc(100dvh - 58px);
+    }
+    .hud {
+      margin-top: 2px;
+      gap: 3px 6px;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+    }
+    .powerups {
+      margin-top: 1px;
+      min-height: 12px;
+      font-size: 9px;
+    }
+    .controls { display: none; }
+    button { padding: 2px 6px; font-size: 9px; }
+  }
 </style>
 </head>
 <body>
 <div class="cabina">
   <h1>ARKANOID</h1>
-  <canvas id="game" width="800" height="600"></canvas>
+  <div class="canvas-wrapper">
+    <canvas id="game" width="800" height="600"></canvas>
+  </div>
   <div class="hud">
     <div>PUNTOS: <b id="score">0</b></div>
     <div>RÉCORD: <b class="record" id="highscore">0</b></div>
@@ -49,7 +180,7 @@
     <button id="btnRestart">REINICIAR NIVEL</button>
   </div>
   <div class="powerups" id="powerups"></div>
-  <div class="controls">Flechas ← / → o ratón / táctil · ESPACIO / CLIC: lanzar / disparar · P o ESC: pausa · C: continuar nivel · R: reiniciar</div>
+  <div class="controls">Flechas ← / → o ratón / táctil · ESPACIO / TOQUE: lanzar / disparar · P o ESC: pausa · C: continuar nivel · R: reiniciar</div>
 </div>
 
 <script>
@@ -1025,14 +1156,14 @@ function draw() {
   ctx.font = 'bold 30px "Courier New", monospace';
   ctx.fillStyle = '#e8ecf5';
   if (state === 'ready') {
-    ctx.fillText('PULSA ESPACIO O CLIC PARA LANZAR', W / 2, H / 2 + 60);
+    ctx.fillText('PULSA ESPACIO O TOCA PARA LANZAR', W / 2, H / 2 + 60);
   } else if (state === 'gameover') {
     ctx.fillStyle = '#ff2e63';
     ctx.fillText('GAME OVER', W / 2, H / 2 + 30);
     ctx.font = '15px "Courier New", monospace';
     ctx.fillStyle = '#8b97ad';
-    ctx.fillText('C: continuar en el Nivel ' + (levelIdx + 1) + ' (conserva puntos)', W / 2, H / 2 + 58);
-    ctx.fillText('R: reiniciar desde el Nivel 1', W / 2, H / 2 + 78);
+    ctx.fillText('C o TOCA: continuar en el Nivel ' + (levelIdx + 1) + ' (conserva puntos)', W / 2, H / 2 + 58);
+    ctx.fillText('R o BOTÓN: reiniciar desde el Nivel 1', W / 2, H / 2 + 78);
     if (window.parent !== window || scoreSubmitted) {
       ctx.font = 'bold 13px "Courier New", monospace';
       ctx.fillStyle = '#3ddc97';
@@ -1043,7 +1174,7 @@ function draw() {
     ctx.fillText('¡VICTORIA ABSOLUTA!', W / 2, H / 2 + 30);
     ctx.font = '15px "Courier New", monospace';
     ctx.fillStyle = '#8b97ad';
-    ctx.fillText('Pulsa R o el botón REINICIAR', W / 2, H / 2 + 58);
+    ctx.fillText('Pulsa R, TOCA o el botón para reiniciar', W / 2, H / 2 + 58);
     if (window.parent !== window || scoreSubmitted) {
       ctx.font = 'bold 13px "Courier New", monospace';
       ctx.fillStyle = '#ffd23f';
@@ -1122,6 +1253,7 @@ window.addEventListener('keyup', (e) => {
 });
 canvas.addEventListener('mousemove', (e) => {
   const rect = canvas.getBoundingClientRect();
+  if (!rect.width) return;
   const x = (e.clientX - rect.left) * (W / rect.width);
   paddle.x = Math.max(0, Math.min(W - paddle.w, x - paddle.w / 2));
 });
@@ -1129,24 +1261,49 @@ canvas.addEventListener('click', () => {
   resumeAudio();
   if (state === 'ready') launch();
   else if (state === 'playing' && puTimers.laser > 0) fireLaser();
+  else if (state === 'gameover') { paused = false; continueLevel(); }
+  else if (state === 'won') { paused = false; resetGame(); }
 });
 
-// Soporte táctil (móviles y tablets)
+// Soporte táctil responsivo y fluido (móviles y tablets)
+let isTouching = false;
+
 function handleTouch(e) {
   e.preventDefault();
   resumeAudio();
-  if (!e.touches.length) return;
-  const touch = e.touches[0];
+  const touches = e.targetTouches && e.targetTouches.length ? e.targetTouches : e.touches;
+  if (!touches || !touches.length) return;
+  const touch = touches[0];
   const rect = canvas.getBoundingClientRect();
+  if (!rect.width) return;
   const x = (touch.clientX - rect.left) * (W / rect.width);
   paddle.x = Math.max(0, Math.min(W - paddle.w, x - paddle.w / 2));
 }
+
 canvas.addEventListener('touchstart', (e) => {
+  isTouching = true;
   handleTouch(e);
   if (state === 'ready') launch();
   else if (state === 'playing' && puTimers.laser > 0) fireLaser();
+  else if (state === 'gameover') { paused = false; continueLevel(); }
+  else if (state === 'won') { paused = false; resetGame(); }
 }, { passive: false });
-canvas.addEventListener('touchmove', handleTouch, { passive: false });
+
+window.addEventListener('touchmove', (e) => {
+  if (isTouching) {
+    handleTouch(e);
+  }
+}, { passive: false });
+
+window.addEventListener('touchend', (e) => {
+  if (isTouching && (!e.touches || e.touches.length === 0)) {
+    isTouching = false;
+  }
+});
+
+window.addEventListener('touchcancel', () => {
+  isTouching = false;
+});
 
 document.getElementById('btnRestart').addEventListener('click', () => {
   resumeAudio();
